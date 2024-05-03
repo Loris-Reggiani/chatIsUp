@@ -9,15 +9,30 @@ from typing import Optional
 import sys
 
 
+# class SendgridParameters:
+#     """Sendgrid parameters"""
+#     DEFAULT_SENDER = "reggi002@cougars.csusm.edu"
+#     SENDGRID_API_KEY = "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"
+#     TEMPLATE_ID_WELCOME = "d-791209ddcfb545169c2ff33e8c386400"
+#     TEMPLATE_ID_INFORMATION = "d-3578ab863b9147349b5f5686945ab74a"
+#     TEMPLATE_ID_PROMOTION = "d-163095583a2c4a9c8388547d96f0a761"
+#     TEMPLATE_ID_SURVEY = "d-9e7c66a0eca8416c84018012de0e61a3"
+#     TEMPLATE_ID_SURVEY_SCRIPTING = "d-5ad468904e1f4789b23fdbdac2134f10"
+
 class SendgridParameters:
     """Sendgrid parameters"""
-    DEFAULT_SENDER = "reggi002@cougars.csusm.edu"
-    SENDGRID_API_KEY = "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"
-    TEMPLATE_ID_WELCOME = "d-791209ddcfb545169c2ff33e8c386400"
-    TEMPLATE_ID_INFORMATION = "d-3578ab863b9147349b5f5686945ab74a"
-    TEMPLATE_ID_PROMOTION = "d-163095583a2c4a9c8388547d96f0a761"
-    TEMPLATE_ID_SURVEY = "d-9e7c66a0eca8416c84018012de0e61a3"
-    TEMPLATE_ID_SURVEY_SCRIPTING = "d-5ad468904e1f4789b23fdbdac2134f10"
+    DEFAULT_SENDER = os.getenv('SENDGRID_SENDER', "reggi002@cougars.csusm.edu")
+    SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+    TEMPLATE_ID_WELCOME = os.getenv(
+        'TEMPLATE_ID_WELCOME', "d-791209ddcfb545169c2ff33e8c386400")
+    TEMPLATE_ID_INFORMATION = os.getenv(
+        'TEMPLATE_ID_INFORMATION', "d-3578ab863b9147349b5f5686945ab74a")
+    TEMPLATE_ID_PROMOTION = os.getenv(
+        'TEMPLATE_ID_PROMOTION', "d-163095583a2c4a9c8388547d96f0a761")
+    TEMPLATE_ID_SURVEY = os.getenv(
+        'TEMPLATE_ID_SURVEY', "d-9e7c66a0eca8416c84018012de0e61a3")
+    TEMPLATE_ID_SURVEY_SCRIPTING = os.getenv(
+        'TEMPLATE_ID_SURVEY_SCRIPTING', "d-5ad468904e1f4789b23fdbdac2134f10")
 
 
 class SendgridClient:
