@@ -11,18 +11,13 @@ import sys
 
 class SendgridParameters:
     """Sendgrid parameters"""
-    DEFAULT_SENDER = os.getenv('SENDGRID_SENDER', "reggi002@cougars.csusm.edu")
-    SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-    TEMPLATE_ID_WELCOME = os.getenv(
-        'TEMPLATE_ID_WELCOME')
-    TEMPLATE_ID_INFORMATION = os.getenv(
-        'TEMPLATE_ID_INFORMATION')
-    TEMPLATE_ID_PROMOTION = os.getenv(
-        'TEMPLATE_ID_PROMOTION')
-    TEMPLATE_ID_SURVEY = os.getenv(
-        'TEMPLATE_ID_SURVEY')
-    TEMPLATE_ID_SURVEY_SCRIPTING = os.getenv(
-        'TEMPLATE_ID_SURVEY_SCRIPTING')
+    DEFAULT_SENDER = ""
+    SENDGRID_API_KEY = ""
+    TEMPLATE_ID_WELCOME = ""
+    TEMPLATE_ID_INFORMATION = ""
+    TEMPLATE_ID_PROMOTION = ""
+    TEMPLATE_ID_SURVEY = ""
+    TEMPLATE_ID_SURVEY_SCRIPTING = ""
 
 
 class SendgridClient:
