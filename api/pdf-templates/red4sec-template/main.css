@@ -1,0 +1,178 @@
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body:first-child {
+            margin: 0;
+            padding: 0;
+        }
+        .cover-page {
+            max-height: 100%;
+            width: 100%;
+            padding: 0;
+            display: block;
+            justify-content: space-around;
+        }
+        .cover-page .img {
+            object-fit: cover;
+            width: 400px;
+            padding-bottom: 20px;
+        }
+
+        .cover-page h1 {
+            width: 100%;
+            font-size: 2.75em;
+            color: rgb(77, 76, 76);
+            text-align: center;
+            margin: auto;
+        }
+
+        .cover-page h1 span {
+            color: rgba(243, 62, 136, 1) !important;
+        }
+
+        .cover-page svg#wave-bottom {
+            width: 794px;
+            height: 20%;
+        }
+        .cover-page svg#wave-top {
+            width: 794px;
+            height: 20%;
+        }
+
+        .bandeau {
+            width: 100%;
+            background-color: white;
+        }
+
+        .bandeau h2 {
+            width: 100%;
+            padding: .75rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1em;
+            color: rgb(255, 85, 11, 1) !important;
+        }
+
+        .bandeau h2 span {
+            font-style: italic;
+        }
+
+        .report-info {
+            text-align: center;
+            color: gray;
+            font-weight: 400;
+            font-size: 1em;
+        }
+
+
+
+            .c-wkns {
+                background-color: purple;
+            }
+
+            .h-wkns {
+                background-color: red;
+            }
+
+            .m-wkns {
+                background-color: orange;
+            }
+
+            .l-wkns {
+                background-color: yellow;
+            }
+
+            .r {
+                background-color: rgb(74, 207, 74);
+            }
+
+            .main-table {
+                border-collapse: separate;
+                border: 2px solid black;
+                border-left: 0;
+                border-right: 0;
+                border-spacing: 0;
+                text-align: left;
+                width: 100%;
+            }
+
+            .main-table thead th {
+                font-size: larger;
+            }
+
+            .main-table span {
+                font-weight: bold;
+            }
+
+            .main-table td:last-child,
+            th:last-child {
+                border-left: 1px solid black;
+            }
+
+            .main-table td,
+            .main-table th {
+                border-bottom: 1px solid black;
+                padding: 3px;
+            }
+
+            .sub-table {
+                border-collapse: collapse;
+                border-left: 0;
+            }
+
+            .sub-table td,
+            .sub-table th {
+                border-bottom: 0;
+            }
+
+            .figure {
+                display: block;
+                text-align: center;
+            }
+            .figure img {
+                max-width: 600px;
+                object-fit: cover;
+            }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            letter-spacing: 1.2px;
+            font-weight: 400;
+        }
+
+        .divider-x {
+            border-bottom: 2px solid black;
+            width: 100%;
+            margin: 0;
+            padding-top: 1em;
+            left: 0;
+        }
+
+        main h1 {
+            font-size: 2.5em;
+            color: rgba(255, 86, 11, 1) !important;
+        }
+
+            .section-text p {
+                text-align: justify;
+                font-size: larger;
+            }
+
+            .section-text p span {
+                font-weight: bold;
+                padding-right: 3px;
+            }
+            .section-text ul li {
+                margin-bottom: 6px;
+                margin-top: 1.5rem;
+                font-size: larger;
+                list-style-type: decimal;
+            }
+            .section-text ul li code {
+                background-color: rgb(224, 224, 224);
+                font-family: 'Courier New', Courier, monospace;
+            }
+            img {
+                max-width: 600px;
+            }

@@ -1,0 +1,63 @@
+name: deploy to prod or qa
+
+on:
+  workflow_run:
+    workflows: ["docker-compose-test"]
+    branches: [current, next]
+    types:
+      - completed
+  push:
+    branches:
+      - "current"
+      - "next"
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: deploy to prod (if branch == current)
+      uses: appleboy/ssh-action@master
+
+      if: github.ref == 'refs/heads/current'
+      with:
+        host: ${{ secrets.HOST_PROD }}
+        username: ${{ secrets.USERNAME_PROD }}
+        port: ${{ secrets.PORT_PROD }}
+        key: ${{ secrets.SSH_KEY_PROD }}
+        script: |
+          cd erp
+
+          git switch current
+          git checkout .
+
+          git pull origin current
+
+          docker compose --env-file api/.env down
+          docker rmi -f erp-api erp-web
+          docker compose --env-file api/.env up -d --force-recreate
+
+    - name: deploy to QA (if branch == next)
+      uses: appleboy/ssh-action@master
+
+      if: github.ref == 'refs/heads/next'
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        port: ${{ secrets.PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd erp
+
+          git switch next
+          git checkout .
+
+          git pull origin next
+
+          # FIXME(clara): main address should come from domain name env value, not this xD
+          find . -type f -name "config.ts" -print0 | xargs -0 sed -i "s/voron/v0ron/g"
+
+          docker compose --env-file api/.env down
+          docker rmi -f erp-api erp-web
+          docker compose --env-file api/.env up -d --force-recreate

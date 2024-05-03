@@ -1,0 +1,30 @@
+name: docker-compose-test
+
+on:
+  pull_request:
+    branches:
+      - "current"
+      - "next"
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: copy .env file
+        run: cp api/.env-dist api/.env && cp web/.env-dist web/.env
+
+      - name: Start containers to check if it builds
+        run: docker-compose -f "docker-compose.yml" --env-file api/.env up -d --build
+
+      - name: show current logs
+        run: sleep 5 && docker-compose --env-file api/.env logs -t
+
+      # FIXME(loris): check services health here (maybe through postman collection?)
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" --env-file api/.env down
