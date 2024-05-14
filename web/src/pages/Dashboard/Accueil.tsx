@@ -22,7 +22,7 @@ import PayLoadForm from './shellcode/PayLoadForm';
 import { getCookiePart } from '../../crypto-utils';
 import Chat from '../Chat/Chat';
 import TeamList from '../Team/TeamList';
-import { useUser } from '../../hooks/useUser';
+// import { useUser } from '../../hooks/useUser';
 import { useLocation } from 'react-router-dom';
 
 Modal.setAppElement('#root'); // Make sure to set your root element here
@@ -329,11 +329,13 @@ export default function Accueil() {
     const location = useLocation();
     const email = location.state?.email;  // Access the email passed in state
     console.log('Email:', email);
-    const user = useUser();
+    // const user = useUser();
+    let user = "";
     const [numProjects, setNumProjects] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
-    const role = user?.role;
+    // const role = user?.role;
+    const role = 0;
     // const role = getCookiePart(Cookies.get('Token')!, 'role')?.toString();
 
     useEffect(() => {
@@ -742,7 +744,7 @@ export default function Accueil() {
                                     <h5 style={{ marginBottom: '15px' }}>
                                         My mission
                                     </h5>
-                                    {role !== '1' && (
+                                    {role.toString() !== '1' && (
                                         <button
                                             type="submit"
                                             className="accueil-create-mission"
@@ -809,7 +811,7 @@ export default function Accueil() {
                                     >
                                         Co-workers
                                     </h5>
-                                    {role !== '1' && (
+                                    {role.toString() !== '1' && (
                                         <button
                                             type="submit"
                                             className="accueil-create-mission"
@@ -838,13 +840,39 @@ export default function Accueil() {
                                     <div className="rect-scroll">
                                         {teamList && teamList.length > 0 ? (
                                             <>
-                                                {teamList.map((team) => (
-                                                    <TeamListContainer
-                                                        key={team.id}
-                                                        team={team}
-                                                        userId={userId}
-                                                    />
-                                                ))}
+{teamList.map((team) => {
+    // Transform each team's members to match the expected Member structure
+    const transformedMembers = team.members.map(member => ({
+        id: member.id,
+        username: member.auth.username,
+        email: member.auth.email,
+        first_name: member.auth.first_name,
+        last_name: member.auth.last_name,
+        last_login: member.auth.last_login,
+        date_joined: member.auth.date_joined,
+        phone_number: member.auth.phone_number,
+        role: member.auth.role,
+        favorites: member.auth.favorites,
+        profile_image: member.auth.profile_image,
+        creation_date: member.creation_date
+    }));
+
+    // Create a new team object with transformed members
+    const transformedTeam = {
+        id: team.id,
+        name: team.name,
+        members: transformedMembers
+    };
+
+    return (
+        <TeamListContainer
+            key={team.id}
+            team={transformedTeam}
+            userId={userId}
+        />
+    );
+})}
+
                                             </>
                                         ) : (
                                             <p style={{ marginTop: '22vh' }}>

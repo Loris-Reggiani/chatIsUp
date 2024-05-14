@@ -234,8 +234,10 @@ function SearchModal({ exit }: SearchModalProps) {
         </div>
     );
 }
-
-export default function TopBar({ email }: { email: string }) {
+interface SideBarProps {
+  email: string;
+}
+export default function TopBar( { email }: SideBarProps ) {
     const navigate = useNavigate();
     const role = getCookiePart(Cookies.get('Token')!, 'role')?.toString();
     const [isOpen, setIsOpen] = useState(false);

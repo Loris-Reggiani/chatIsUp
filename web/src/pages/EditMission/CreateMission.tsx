@@ -207,9 +207,9 @@ export default function CreateMission() {
 
     return (
         <div className="dashboard">
-            <SideBar />
+            <SideBar email="email"/>
             <div className="dashboard_container">
-                <TopBar />
+                <TopBar email="email"/>
                 <div className="page-info">
                     <div>
                         <h2 style={{ fontSize: '28px', fontFamily: 'Arial' }}>

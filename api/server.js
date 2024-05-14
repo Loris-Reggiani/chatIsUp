@@ -16,6 +16,8 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const PORT = process.env.PORT || 8000; // Use the provided port or fallback to 8000
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/api', authRoutes);
@@ -46,8 +48,8 @@ wss.on('connection', (ws) => {
 // Sync all models with the database
 sequelize.sync({ force: true }).then(() => {
     console.log('Database synced and associations created');
-    server.listen(8000, () => {
-        console.log('Server running on http://localhost:8000');
+    server.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
     });
 }).catch(err => {
     console.error('Failed to sync database:', err);

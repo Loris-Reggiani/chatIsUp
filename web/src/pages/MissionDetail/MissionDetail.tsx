@@ -323,9 +323,9 @@ export default function MissionDetail() {
 
     return (
         <div className="dashboard">
-            <SideBar />
+            <SideBar email="email"/>
             <div className="dashboard_container">
-                <TopBar />
+                <TopBar email="email"/>
                 <div className="mission-detail-container">
                     <div className="mission-detail-topline">
                         <h1>

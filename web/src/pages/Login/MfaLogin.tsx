@@ -7,7 +7,7 @@ import Feedbacks from '../../component/Feedback';
 
 export default function MfaLogin() {
     const [codeValidation, setCodeValidation] = useState(new Array(6).fill(''));
-    const inputRefs = useRef([...Array(6)].map(() => React.createRef()));
+    const inputRefs = useRef<Array<React.RefObject<HTMLInputElement>>>([...Array(6)].map(() => React.createRef<HTMLInputElement>()));
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [message, setMess] = useState({ mess: '', color: 'success' });
@@ -37,16 +37,16 @@ export default function MfaLogin() {
         });
     };
 
-const handleCodeInput = (index:any, value:any) => {
-    const newCodeValidation = [...codeValidation];
-    newCodeValidation[index] = value;
-    setCodeValidation(newCodeValidation);
+    const handleCodeInput = (index: number, value: string) => {
+        const newCodeValidation = [...codeValidation];
+        newCodeValidation[index] = value;
+        setCodeValidation(newCodeValidation);
 
-    // Automatically move to the next input field after a character is input
-    if (value && index < codeValidation.length - 1) {
-        inputRefs.current[index + 1].current?.focus();
-    }
-};
+        // Automatically move to the next input field after a character is input
+        if (value && index < codeValidation.length - 1) {
+            inputRefs.current[index + 1].current?.focus();
+        }
+    };
 
 
     const handleVerifyCode = async () => {

@@ -218,9 +218,9 @@ export default function EditMission() {
 
     return (
         <div className="dashboard">
-            <SideBar />
+            <SideBar email="email"/>
             <div className="dashboard_container">
-                <TopBar />
+                <TopBar email="email"/>
                 <div className="page-info" />
                 <div className="edit-container">
                     <div

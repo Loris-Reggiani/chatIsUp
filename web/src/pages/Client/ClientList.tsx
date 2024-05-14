@@ -96,9 +96,9 @@ export default function ClientList() {
 
     return (
         <div className="dashboard">
-            <SideBar />
+            <SideBar email="email"/>
             <div className="dashboard_container">
-                <TopBar />
+                <TopBar email="email"/>
                 <div className="dashboard-pages">
                     <div className="page-info">
                         <h1>My Clients</h1>

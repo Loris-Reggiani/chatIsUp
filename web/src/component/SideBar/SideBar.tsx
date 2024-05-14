@@ -52,7 +52,7 @@ const SubMenuItem: React.FC<ICardItem> = function SubMenu({ item }) {
     );
 };
 
-export default function SideBar({ email }: { email: string }) {
+export default function SideBar( email: string ) {
     const navigate = useNavigate();
     const isPentester =
         getCookiePart(Cookies.get('Token')!, 'role')?.toString() === '1';

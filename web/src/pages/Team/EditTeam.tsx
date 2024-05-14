@@ -234,9 +234,9 @@ export default function CreateTeam() {
 
     return (
         <div className="dashboard">
-            <SideBar email={"email"} />
+            <SideBar email="email" />
             <div className="dashboard_container">
-                <TopBar email={"email"} />
+                <TopBar email="email" />
                 <div className="page-info">
                     <div>
                         <h2 style={{ fontSize: '28px', fontFamily: 'Arial' }}>
