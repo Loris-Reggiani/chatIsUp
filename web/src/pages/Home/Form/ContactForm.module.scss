@@ -1,0 +1,84 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 65%;
+  height: auto;
+  padding: 0;
+}
+
+.title {
+  font-family: "Poppins-Bold";
+  text-align: center;
+  color: var(--primary-btn);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  font-family: "Poppins-Regular";
+  color: var(--);
+  background-color: transparent;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  box-shadow: 2px 2px 2px var(--light-gray);
+  border-radius: 5px;
+  &:focus {
+    outline: none;
+    box-shadow: 2px 2px 2px var(--plan-secondary-color);
+  }
+}
+
+.textArea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  box-shadow: 2px 2px 2px var(--light-gray);
+  border-radius: 5px;
+  resize: vertical;
+  &:focus {
+    outline: none;
+    box-shadow: 2px 2px 2px var(--plan-secondary-color);
+  }
+}
+
+.button {
+  width: 100%;
+  padding: 0.5rem;
+  font-family: "Poppins-Regular";
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: var(--primary-btn);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: var(--primary-hover-btn);
+  }
+}

@@ -1,0 +1,112 @@
+.action-ctn{
+    display: flex;
+    justify-content: center;
+}
+
+.left-side{
+    text-align: left;
+    font-style: 'Poppins-Light';
+}
+
+.left-side h1{
+    font-size: 2rem;
+    border-bottom: 1px solid var(--secondary-bg);
+}
+
+.team-container{
+    margin: 5px;
+    font-style: 'Poppins-Light';
+}
+
+.dlt-btn{
+    min-width: 20px;
+    background-color: white;
+    border: 1px solid var(--primary-btn);
+    color: var(--primary-btn);
+}
+
+.team-popup{
+    display: block;
+    text-align: center;
+    align-items: center;
+  
+    /* Probably need media queries here */
+    width: 600px;
+    max-width: 100%;
+    
+    height: 300px;
+    max-height: 100%;
+    
+    position: fixed;
+    
+    z-index: 100;
+    
+    left: 50%;
+    top: 50%;
+    
+    /* Use this for centering if unknown width/height */
+    transform: translate(-50%, -50%);
+    
+    /* If known, negative margins are probably better (less chance of blurry text). */
+    /* margin: -200px 0 0 -200px; */
+    
+    background: white;
+    box-shadow: 0 0 60px 5px rgba(0, 0, 0, 0.9);
+}
+.form-popup{
+    width: 300px;
+    height: 200px;
+    margin:auto;
+    width: fit-content;
+}
+
+.form-popup input{
+    padding: 10px 10px;
+    border-radius: 5px;
+    width: 100%;
+    height: 50px;  
+    font-size: 14px;
+    font-family: "Poppins-Regular";
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #9A9A9A;
+    margin-top: 50px;
+}
+.form-popup label{
+    height: fit-content;
+    position: fixed;
+    top: 30%;
+   // margin-top:65px;
+}
+.form-popup button{
+    height: 20%;
+    margin: 0;
+
+}
+
+.secu-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+}
+
+.secu-label {
+    text-align: left;
+    margin: 1rem 0;
+    padding: 0;
+}
+
+.secu-input {
+    height: 2rem;
+    border-radius: 6px;
+    border: 1px solid var(--light-gray);
+}
+
+.secu-input:focus {
+    border: 1px solid var(--primary-btn);
+    outline: none;
+}
+
+.secu-btn {
+    min-width: 10px;
+}

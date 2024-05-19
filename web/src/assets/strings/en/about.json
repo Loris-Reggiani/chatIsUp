@@ -1,0 +1,23 @@
+{
+    "catch": "You a pentester yet ?",
+    "catchHighlight": "A pentester's team workflow enhancer that's:",
+    "catchCTA": "Join voron",
+    "bullets": ["Efficient", "Fast", "Easy to use", "Built for your workflow"],
+    "more": [
+        {
+            "title": "Reliability & Excellence",
+            "desc": "Voron offers a platform for service providers to test deployed defenses and processes to ensure the sustainability of the system, through the missions to infiltrate corporate networks.",
+            "position": "right"
+        },
+        {
+            "title": "Comprehensive Reporting",
+            "desc": "Voron provides a comprehensive report detailing our findings which includes detailed analysis of detected vulnerabilities and potential risk factors at the end of every test.",
+            "position": "left"
+        },
+        {
+            "title": "Adherence to Rules of Engagement",
+            "desc": "In all our endeavors, we follow established rules of engagement, confirming our operations are within the authorized scope and do not infrace upon any contractual or legal boundaries.",
+            "position": "right"
+        }
+    ]
+}
