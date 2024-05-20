@@ -96,7 +96,7 @@ export default function SignUp() {
         setOpen(true);
         const { username, email, role, password } = state;
         if (password.length < 8) {
-            setMessage('Password should has at least 8 characters', 'error');
+            setMessage('Password should have at least 8 characters', 'error');
             return;
         }
         if (email === '') {
@@ -104,30 +104,29 @@ export default function SignUp() {
             return;
         }
         if (username.length < 3) {
-            setMessage('username should has at least 3 characters', 'error');
+            setMessage('Username should have at least 3 characters', 'error');
             return;
         }
 
-        await axios
-            .post(`${config.apiUrl}/register`, {
+        try {
+            await axios.post(`${config.apiUrl}/register`, {
                 auth: {
                     username,
                     email,
                     role,
                     password,
                 },
-            })
-            .then(() => {
-                setMessage('Email verification sent', 'success');
-                setPopUp(true);
-            })
-            .catch((e: any) => {
-                setMessage(
-                    String(Object.values(e.response.data.auth)[0]),
-                    'error'
-                );
             });
+            setMessage('Email verification sent', 'success');
+            setPopUp(true);
+        } catch (e) {
+            setMessage(
+                (e as any).response?.data?.error || 'An error occurred during registration',
+                'error'
+            );
+        }
     };
+
 
     const confirmUpdate = async () => {
         setOpen(true);

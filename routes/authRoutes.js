@@ -9,6 +9,12 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
     const { username, email, password, role } = req.body;
+    
+    // Ensure all required fields are present
+    if (!username || !email || !password || !role) {
+        return res.status(400).json({ error: 'All fields are required.' });
+    }
+
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
