@@ -92,40 +92,53 @@ export default function SignUp() {
         localStorage.setItem('user_info', JSON.stringify(state));
     }, [state]);
 
-    const submit = async () => {
-        setOpen(true);
-        const { username, email, role, password } = state;
-        if (password.length < 8) {
-            setMessage('Password should have at least 8 characters', 'error');
-            return;
-        }
-        if (email === '') {
-            setMessage('Please enter an email', 'error');
-            return;
-        }
-        if (username.length < 3) {
-            setMessage('Username should have at least 3 characters', 'error');
-            return;
-        }
+const submit = async () => {
+    setOpen(true);
+    const { username, email, role, password, confirmpassword } = state;
 
-        try {
-            await axios.post(`${config.apiUrl}/register`, {
-                auth: {
-                    username,
-                    email,
-                    role,
-                    password,
-                },
-            });
-            setMessage('Email verification sent', 'success');
-            setPopUp(true);
-        } catch (e) {
-            setMessage(
-                (e as any).response?.data?.error || 'An error occurred during registration',
-                'error'
-            );
-        }
-    };
+    // Basic validation
+    if (!username || !email || !password || !confirmpassword) {
+        setMessage('All fields are required', 'error');
+        return;
+    }
+
+    if (password !== confirmpassword) {
+        setMessage('Password and Confirm Password do not match', 'error');
+        return;
+    }
+
+    if (password.length < 8) {
+        setMessage('Password should have at least 8 characters', 'error');
+        return;
+    }
+
+    if (!Regex.test(email)) {
+        setMessage('Please enter a valid email', 'error');
+        return;
+    }
+
+    if (username.length < 3) {
+        setMessage('Username should have at least 3 characters', 'error');
+        return;
+    }
+
+    try {
+        const response = await axios.post(`${config.apiUrl}/register`, {
+            username,
+            email,
+            role,
+            password
+        });
+
+        setMessage('Email verification sent', 'success');
+        setPopUp(true);
+    } catch (e: any) {
+        setMessage(
+            e.response?.data?.error || 'An error occurred during registration',
+            'error'
+        );
+    }
+};
 
 
     const confirmUpdate = async () => {
