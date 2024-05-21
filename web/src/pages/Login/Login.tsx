@@ -206,8 +206,8 @@ const submit = async () => {
                     'Content-Type': 'application/json',
                 },
             }).then((e) => {
-                // Cookies.set('Token', e.data.token, { expires: 100 });
-                // Pass email as part of the navigation state
+                Cookies.set('Token', e.data.token, { expires: 100 });
+                console.log('Token:', e.data.token);
                 navigate('/accueil', { state: { email: email } });
             }).catch(() => {
                 setErrorEmail('Invalid email or password!');

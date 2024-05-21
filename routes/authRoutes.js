@@ -55,7 +55,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Authentication failed. User not found.' });
         }
         const jwt = require('jsonwebtoken');
-        const payload = { userId: user.id, email: user.email };
+        const payload = { userId: user.id, email: user.email, role: user.role};
         const token = jwt.sign(payload, '', { algorithm: 'none' });
                 bcrypt.compare(password, user.password, (err, result) => {
             if (result) {
