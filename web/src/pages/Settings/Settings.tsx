@@ -126,9 +126,9 @@ export default function Settings() {
 
     return (
         <div className="dashboard">
-            <SideBar email="email"/>
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email="email"/>
+                <TopBar />
                 <div className="setting-container">
                     <div className="page-info">
                         <h1>Settings</h1>

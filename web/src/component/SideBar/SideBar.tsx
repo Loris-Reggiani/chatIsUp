@@ -51,33 +51,31 @@ const SubMenuItem: React.FC<ICardItem> = function SubMenu({ item }) {
         </>
     );
 };
-interface SideBarProps {
-  email: string;
-}
-export default function SideBar( { email }: SideBarProps ) {
+
+export default function SideBar() {
     const navigate = useNavigate();
     const isPentester =
         getCookiePart(Cookies.get('Token')!, 'role')?.toString() === '1';
 
     const logout = async () => {
-        // await axios(`${config.apiUrl}/logout`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-type': 'application/json',
-        //         Authorization: `Token ${getCookiePart(
-        //             Cookies.get('Token')!,
-        //             'token'
-        //         )}`,
-        //     },
-        // })
-        //     .then(() => {
-        //         Cookies.remove('Token', { path: '/dashboard' });
-        //         Cookies.remove('Role', { path: '/dashboard' });
-        //         navigate('/');
-        //     })
-        //     .catch((e) => {
-        //         throw e;
-        //     });
+        await axios(`${config.apiUrl}/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Token ${getCookiePart(
+                    Cookies.get('Token')!,
+                    'token'
+                )}`,
+            },
+        })
+            .then(() => {
+                Cookies.remove('Token', { path: '/dashboard' });
+                Cookies.remove('Role', { path: '/dashboard' });
+                navigate('/');
+            })
+            .catch((e) => {
+                throw e;
+            });
     };
 
     const data = SideBarData();

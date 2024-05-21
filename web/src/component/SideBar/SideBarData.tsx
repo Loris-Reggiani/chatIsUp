@@ -19,66 +19,66 @@ const SideBarData = function SideBarDataF() {
 
     const getMissionInfo = async (idMission: string) => {
         let name = '';
-        // await axios
-        //     .get(`${config.apiUrl}/mission/${Number(idMission)}`, {
-        //         headers: {
-        //             'Content-type': 'application/json',
-        //             Authorization: `Token ${getCookiePart(
-        //                 Cookies.get('Token')!,
-        //                 'token'
-        //             )}`,
-        //         },
-        //     })
-        //     .then((data) => {
-        //         name = data.data.title;
-        //     })
-        //     .catch((e) => {
-        //         throw e;
-        //     });
+        await axios
+            .get(`${config.apiUrl}/mission/${Number(idMission)}`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
+                },
+            })
+            .then((data) => {
+                name = data.data.title;
+            })
+            .catch((e) => {
+                throw e;
+            });
         return name;
     };
 
     const getUserInfo = async () => {
-        // let url = `${config.apiUrl}/`;
-        // if (role === '2') {
-        //     url += 'manager';
-        // } else if (role === '3') {
-        //     url += 'freelancer';
-        // } else {
-        //     url += 'pentester';
-        // }
-        // await axios
-        //     .get(`${url}/${getCookiePart(Cookies.get('Token')!, 'id')}`, {
-        //         headers: {
-        //             'Content-type': 'application/json',
-        //             Authorization: `Token ${getCookiePart(
-        //                 Cookies.get('Token')!,
-        //                 'token'
-        //             )}`,
-        //         },
-        //     })
-        //     .then((data) => {
-        //         setUserInfo(data.data.auth);
-        //     })
-        //     .catch((e) => {
-        //         throw e;
-        //     });
+        let url = `${config.apiUrl}/`;
+        if (role === '2') {
+            url += 'manager';
+        } else if (role === '3') {
+            url += 'freelancer';
+        } else {
+            url += 'pentester';
+        }
+        await axios
+            .get(`${url}/${getCookiePart(Cookies.get('Token')!, 'id')}`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
+                },
+            })
+            .then((data) => {
+                setUserInfo(data.data.auth);
+            })
+            .catch((e) => {
+                throw e;
+            });
     };
 
     const getMissionFav = async () => {
-        // const favID = userInfo.favorites;
-        // const arr: { path: string; title: string; idNav: string }[] = [];
-        // if (favID) {
-        //     for (let i = 0; i < favID!.length; i += 1) {
-        //         const name = await getMissionInfo(favID[i]);
-        //         arr.push({
-        //             path: `/mission/detail`,
-        //             title: name,
-        //             idNav: favID[i],
-        //         });
-        //     }
-        // }
-        // setTab(arr);
+        const favID = userInfo.favorites;
+        const arr: { path: string; title: string; idNav: string }[] = [];
+        if (favID) {
+            for (let i = 0; i < favID!.length; i += 1) {
+                const name = await getMissionInfo(favID[i]);
+                arr.push({
+                    path: `/mission/detail`,
+                    title: name,
+                    idNav: favID[i],
+                });
+            }
+        }
+        setTab(arr);
         return tab;
     };
 

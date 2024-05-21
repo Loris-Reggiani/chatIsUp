@@ -30,7 +30,6 @@ import MfaLogin from './pages/Login/MfaLogin';
 import ClientList from './pages/Client/ClientList';
 import UnsubscribeEmail from './pages/Home/Unsubscribe/Unsubscribe';
 import SurveyPage from './pages/Home/Survey/Survey';
-// import { UserProvider } from './hooks/useUser';
 
 function App() {
     return (
@@ -48,7 +47,7 @@ function App() {
                 <Route path="/reset" element={<Reset />} />
                 <Route path="/unsubscribe" element={<UnsubscribeEmail />} />
                 <Route path="/survey" element={<SurveyPage />} />
-                {/* <Route element={<PrivateRoute />}> */}
+                <Route element={<PrivateRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/accueil" element={<Accueil />} />
                     <Route path="/vuln/add" element={<AddVulnerability />} />
@@ -70,7 +69,7 @@ function App() {
                     />
                     <Route path="/team/edit" element={<EditTeam />} />
                     <Route path="/client" element={<ClientList />} />
-                {/* </Route> */}
+                </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </div>

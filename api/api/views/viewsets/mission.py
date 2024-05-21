@@ -25,18 +25,15 @@ from django.http import JsonResponse
 from api.services.crtsh import crtshAPI
 from django.core.cache import cache
 from django.db.models import Q
-from rest_framework.permissions import AllowAny
-
 
 class NmapViewset(viewsets.ModelViewSet):
     """
         CRUD for Nmap scan object
     """
     queryset = NmapScan.objects.all()  # type: ignore
-    authentication_classes = []
+    authentication_classes = [TokenAuthentication]
     serializer_class = NmapSerializer
-    permission_classes = [permissions.IsAuthenticated, IsLinkedToData,
-                          IsManager & ReadOnly | IsPentester | IsFreelancer]
+    permission_classes = [permissions.IsAuthenticated , IsLinkedToData, IsManager & ReadOnly | IsPentester | IsFreelancer]
 
     @swagger_auto_schema(
         operation_description="Creates and parses an NMAP output object.",
@@ -73,20 +70,17 @@ class NmapViewset(viewsets.ModelViewSet):
         parser = NmapParser()
         if file := request.data.get('nmap_file'):
 
-            if not parser.run(file):
-                return Response({'error': 'invalid nmap file'}, status=HTTP_400_BAD_REQUEST)
+            if not parser.run(file): return Response({'error': 'invalid nmap file'}, status=HTTP_400_BAD_REQUEST)
 
             request.data['ips'] = parser.ip_addrs
             request.data['ports'] = parser.ports
             request.data['nmap_version'] = parser.version_nmap
             request.data['scan_date'] = parser.scan_date
 
-            if parser.os_details:
-                request.data['os_details'] = parser.os_details
+            if parser.os_details: request.data['os_details'] = parser.os_details
 
             if recon_id := request.data.get('recon_id'):
-                recon, _ = Recon.objects.get_or_create(
-                    id=recon_id)  # type: ignore
+                recon, _ = Recon.objects.get_or_create(id=recon_id)  # type: ignore
 
                 if '1' not in (os.environ.get('TEST', '0'), os.environ.get('CI', '0')):
                     cache.delete(f'mission_{recon.mission.id}')
@@ -112,16 +106,14 @@ class NmapViewset(viewsets.ModelViewSet):
         parser = NmapParser()
         if file := request.data.get('nmap_file'):
 
-            if not parser.run(file):
-                return Response({'error': 'invalid nmap file'}, status=HTTP_400_BAD_REQUEST)
+            if not parser.run(file): return Response({'error': 'invalid nmap file'}, status=HTTP_400_BAD_REQUEST)
 
             request.data['ips'] = parser.ip_addrs
             request.data['ports'] = parser.ports
             request.data['nmap_version'] = parser.version_nmap
             request.data['scan_date'] = parser.scan_date
 
-            if parser.os_details:
-                request.data['os_details'] = parser.os_details
+            if parser.os_details: request.data['os_details'] = parser.os_details
 
             request.data.pop('nmap_file')
 
@@ -138,15 +130,12 @@ class ReconViewset(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
     """
 
     queryset = Recon.objects.all()  # type: ignore
-    authentication_classes = []
+    authentication_classes = [TokenAuthentication]
     serializer_class = ReconSerializer
-    permission_classes = [permissions.IsAuthenticated, IsLinkedToData,
-                          IsManager & ReadOnly | IsPentester | IsFreelancer]
-
+    permission_classes = [permissions.IsAuthenticated, IsLinkedToData, IsManager & ReadOnly | IsPentester | IsFreelancer]
 
 class CrtShView(APIView):
     CACHE_TIMEOUT = 3600  # Set your desired cache timeout in seconds
-
     @swagger_auto_schema(
         operation_description="Fetches certificates for a given domain and saves them to a mission.",
         manual_parameters=[
@@ -206,13 +195,12 @@ class CrtShView(APIView):
         cache.set(domain, crtsh_data_list, self.CACHE_TIMEOUT)
         return JsonResponse(crtsh_data_list, safe=False)
 
-
 class CredentialViewset(viewsets.ModelViewSet):
     """CRUD operation to add credentials to a mission"""
 
     queryset = Credentials.objects.all()  # type: ignore
     permission_classes = [permissions.IsAuthenticated, IsLinkedToData]
-    authentication_classes = []
+    authentication_classes = [TokenAuthentication]
     serializer_class = CredentialsSerializer
 
     @swagger_auto_schema(
@@ -244,7 +232,7 @@ class CredentialViewset(viewsets.ModelViewSet):
         creds = Credentials.objects.filter(mission=mission_id)  # type: ignore
         warn(f'creds: {creds}')
 
-        # Apply pagination to the queryset
+             # Apply pagination to the queryset
         page = self.paginate_queryset(creds)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -275,7 +263,7 @@ class CredentialViewset(viewsets.ModelViewSet):
                     type=openapi.TYPE_STRING,
                     description="mission ID of the related credential",
                 ),
-            },
+           },
         ),
         responses={
             "200": openapi.Response(
@@ -295,8 +283,7 @@ class CredentialViewset(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         mission_id = request.data.get('mission_id', 0)
 
-        # type: ignore
-        if mission := Mission.objects.filter(id=mission_id).first():
+        if mission := Mission.objects.filter(id=mission_id).first():  # type: ignore
 
             if self.request.user.role != 3 and not mission.is_member(self.request.user):
                 return Response(status=HTTP_403_FORBIDDEN)
@@ -312,12 +299,12 @@ class MissionViewset(viewsets.ModelViewSet):  # pylint: disable=too-many-ancesto
     """
 
     queryset = Mission.objects.all()  # type: ignore
-    permission_classes = [AllowAny]
-    authentication_classes = []
+    permission_classes = [permissions.IsAuthenticated, IsLinkedToData, IsPentester & ReadOnly | IsManager | IsFreelancer]
+    authentication_classes = [TokenAuthentication]
     serializer_class = MissionSerializer
 
     CACHE_KEY_PREFIX = 'mission_'
-    CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+    CACHE_TIMEOUT = 60 * 60 * 24 # 24 hours
 
     @swagger_auto_schema(
         operation_description="Creates a mission. Must be done by a Manager.",
@@ -373,8 +360,9 @@ class MissionViewset(viewsets.ModelViewSet):  # pylint: disable=too-many-ancesto
         tags=['mission'],
     )
     def create(self, request, *args, **kwargs):
-        request.data['created_by'] = 7
-        request.data['last_updated_by'] = 7
+        request.data['created_by'] = request.user.id
+        request.data['last_updated_by'] = request.user.id
+
 
         if not 'team' in request.data:
             if USER_ROLES[request.user.role] == 'freelancer':
@@ -395,21 +383,12 @@ class MissionViewset(viewsets.ModelViewSet):  # pylint: disable=too-many-ancesto
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        """
-        Retrieve a list of missions based on the request parameters.
-
-        Args:
-            request (HttpRequest): The HTTP request object.
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-
-        Returns:
-            Response: The HTTP response containing the list of missions.
-        """
         name_query = request.query_params.get('search', None)
 
-        # Filter missions created by user with id 7
-        missions = Mission.objects.filter(created_by=7)
+        if request.user.role == 2 or request.user.role == 3:
+            missions = Mission.objects.filter(created_by=request.user.id)
+        else:
+            missions = Mission.objects.filter(team__members__auth__id=request.user.id)
 
         if name_query:
             missions = missions.filter(title=name_query)
@@ -431,7 +410,7 @@ class MissionViewset(viewsets.ModelViewSet):  # pylint: disable=too-many-ancesto
 
 
 class WappalyzerRequestView(APIView):
-    authentication_classes = []
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):

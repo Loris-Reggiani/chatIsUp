@@ -6,8 +6,7 @@ import './Login.scss';
 import Cookies from 'js-cookie';
 import Modal from 'react-modal';
 import config from '../../config';
-//  import { decodeJWT } from '../../crypto-utils';
-// import jwt, { JwtPayload } from 'jsonwebtoken';
+import { createCookie, getCookiePart } from '../../crypto-utils';
 import Feedbacks from '../../component/Feedback';
 
 export default function Login() {
@@ -62,163 +61,92 @@ export default function Login() {
         }
     };
 
-    interface DecodedToken {
-    id: string;
-    role: string;
-}
-
- // Example of a utility function to decode JWT and assert the custom type
-// function decodeJWT(token: string): DecodedToken | null {
-//     try {
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload & DecodedToken;
-//         return decoded;
-//     } catch (error) {
-//         console.error("Token decoding failed:", error);
-//         return null;
-//     }
-// }
-
-/*
-const sendMfaCode = async () => {
-    const token = Cookies.get('Token'); // Fetch the JWT from cookies
-    if (!token) {
-        console.error('No token available.');
-        return; // Early exit if no token is found
-    }
-
-    const decodedToken = decodeJWT(token);
-    if (!decodedToken) {
-        console.error("Invalid or expired token");
-        return; // Handle invalid token case, maybe redirect to login
-    }
-
-    try {
-        await axios.get(`${config.apiUrl}/mfa`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}` // Use Bearer scheme for JWT
-            },
-        });
-        navigate('/mfa_check'); // Navigate to MFA check page upon successful request
-    } catch (e) {
-        console.error('Failed to send MFA code:', e);
-        throw e; // Rethrow or handle error as needed
-    }
-};
-*/
-    // const sendMfaCode = async () => {
-    //     await axios
-    //         .get(`${config.apiUrl}/mfa`, {
-    //             headers: {
-    //                 'Content-type': 'application/json',
-    //                 Authorization: `Token ${decodeJWT(
-    //                     Cookies.get('Token')!,
-    //                     'token'
-    //                 )}`,
-    //             },
-    //         })
-    //         .then(() => {
-    //             navigate('/mfa_check');
-    //         })
-    //         .catch((e) => {
-    //             throw e;
-    //         });
-    // };
-
-/*
-    const getUserInfos = async () => {
-    const token = Cookies.get('Token');
-    if (!token) {
-        console.error("Token is undefined");
-        return;
-    }
-
-    const decoded = decodeJWT(token);
-    if (!decoded) {
-        console.error("Token is invalid or expired");
-        return;
-    }
-
-    const { id, role } = decoded; // Now TypeScript knows about `id` and `role`
-
-    let url = `${config.apiUrl}/`;
-
-    switch (role) {
-        case '3': url += 'freelancer'; break;
-        case '2': url += 'manager'; break;
-        default: url += 'pentester'; break;
-    }
-
-    try {
-        const response = await axios.get(`${url}/${id}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        });
-        
-        if (response.data.auth && response.data.auth.has_otp === true) {
-            sendMfaCode();
-        } else {
-            navigate('/info');
-        }
-    } catch (error) {
-        console.error('Error fetching user info:', error);
-    }
-};
-*/
-//     const getUserInfos = async () => {
-//         let url = `${config.apiUrl}/`;
-         // if (getCookiePart(Cookies.get('Token')!, 'role')?.toString() === '3') {
-         //     url += 'freelancer';
-         // } else if (
-         //     getCookiePart(Cookies.get('Token')!, 'role')?.toString() === '2'
-         // ) {
-         //     url += 'manager';
-         // } else {
-         //     url += 'pentester';
-         // }
-//         await axios
-//             .get(`${url}/${getCookiePart(Cookies.get('Token')!, 'id')}`, {
-//                 headers: {
-//                     'Content-type': 'application/json',
-//                     Authorization: `Token ${getCookiePart(
-//                         Cookies.get('Token')!,
-//                         'token'
-//                     )}`,
-//                 },
-//             })
-//             .then((data) => {
-//                 if (data.data.auth.has_otp === true) sendMfaCode();
-//                 else navigate('/info');
-//             })
-//             .catch((e) => {
-//                 throw e;
-//             });
-//     };
-
-const submit = async () => {
-    setOpen(true);
-    if (email !== '' && pwd !== '') {
-        try {
-            await axios.post(`${config.apiUrl}/login`, JSON.stringify({ email, password: pwd }), {
+    const sendMfaCode = async () => {
+        await axios
+            .get(`${config.apiUrl}/mfa`, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
                 },
-            }).then((e) => {
-                Cookies.set('Token', e.data.token, { expires: 100 });
-                console.log('Token:', e.data.token);
-                navigate('/accueil', { state: { email: email } });
-            }).catch(() => {
-                setErrorEmail('Invalid email or password!');
+            })
+            .then(() => {
+                navigate('/mfa_check');
+            })
+            .catch((e) => {
+                throw e;
             });
-        } catch (error) {
-            setErrorEmail('Invalid email or password!');
+    };
+
+    const getUserInfos = async () => {
+        let url = `${config.apiUrl}/`;
+        if (getCookiePart(Cookies.get('Token')!, 'role')?.toString() === '3') {
+            url += 'freelancer';
+        } else if (
+            getCookiePart(Cookies.get('Token')!, 'role')?.toString() === '2'
+        ) {
+            url += 'manager';
+        } else {
+            url += 'pentester';
         }
-    } else {
-        setMessage('Invalid email or password!', 'error');
-    }
-};
+        await axios
+            .get(`${url}/${getCookiePart(Cookies.get('Token')!, 'id')}`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
+                },
+            })
+            .then((data) => {
+                if (data.data.auth.has_otp === true) sendMfaCode();
+                else navigate('/info');
+            })
+            .catch((e) => {
+                throw e;
+            });
+    };
+
+    const submit = async () => {
+        setOpen(true);
+        if (email !== '' && pwd.length > 7) {
+            try {
+                await axios
+                    .post(
+                        `${config.apiUrl}/login`,
+                        JSON.stringify({
+                            email,
+                            password: pwd,
+                        }),
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        }
+                    )
+                    .then((e) => {
+                        Cookies.set(
+                            'Token',
+                            createCookie(e.data.id, e.data.token, e.data.role),
+                            {
+                                expires: Date.parse(e.data.expiry),
+                            }
+                        );
+                        getUserInfos();
+                    })
+                    .catch(() => {
+                        setErrorEmail('Invalid email or password!');
+                    });
+            } catch (error) {
+                setErrorEmail('Invalid email or password!');
+            }
+        } else {
+            setMessage('Invalid email or password!', 'error');
+        }
+    };
 
     // Handle submit when click 'enter' on keyboard
     useEffect(() => {

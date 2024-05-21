@@ -7,9 +7,9 @@ import '../Dashboard/Dashboard.scss';
 export default function Team() {
     return (
         <div className="dashboard">
-            <SideBar email="email"/>
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email="email"/>
+                <TopBar />
                 <TeamList />
             </div>
         </div>

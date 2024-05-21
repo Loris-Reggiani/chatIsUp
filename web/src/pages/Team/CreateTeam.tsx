@@ -13,7 +13,7 @@ import {
     Box,
     Chip,
 } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Feedbacks from '../../component/Feedback';
 import TopBar from '../../component/SideBar/TopBar';
@@ -34,9 +34,6 @@ const MenuProps = {
 };
 
 export default function CreateTeam() {
-    const location = useLocation();
-    const email = location.state?.email;  // Access the email passed in state
-    console.log("Email: ", email);  // Log the email passed in state
     const [Title, setTitle] = useState('');
     const [Team, setTeam] = useState<string[]>();
     const [open, setOpen] = useState(false);
@@ -193,9 +190,9 @@ export default function CreateTeam() {
 
     return (
         <div className="dashboard">
-            <SideBar email={email} />
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email={email} />
+                <TopBar />
                 <div className="page-info">
                     <div>
                         <h2 style={{ fontSize: '28px', fontFamily: 'Arial' }}>

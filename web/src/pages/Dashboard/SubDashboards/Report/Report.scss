@@ -1,8 +1,8 @@
 /* Add this to your Report.scss file or create a new CSS file */
 .logo-image {
-  width: 160px;
+  max-width: 100px;
   /* Adjust the width as needed */
-  height: 160px;
+  height: auto;
   /* Maintain aspect ratio */
   /* Add any additional styles you need */
 }

@@ -96,9 +96,9 @@ export default function ClientList() {
 
     return (
         <div className="dashboard">
-            <SideBar email="email"/>
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email="email"/>
+                <TopBar />
                 <div className="dashboard-pages">
                     <div className="page-info">
                         <h1>My Clients</h1>
@@ -140,9 +140,6 @@ export default function ClientList() {
                                                         <th className="md-3">
                                                             Number of employees
                                                         </th>
-                                                        <th className="md-3">
-                                                            Action
-                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 {records.map((client) => {
@@ -168,18 +165,6 @@ export default function ClientList() {
                                                                     {
                                                                         client.nbEmployees
                                                                     }
-                                                                </td>
-                                                                <td className="scope-table-action">
-                                                                    <input
-                                                                        type="button"
-                                                                        value="Open"
-                                                                        className="openBtn"
-                                                                        onClick={() =>
-                                                                            NavMissionDetail(
-                                                                                client.mission
-                                                                            )
-                                                                        }
-                                                                    />
                                                                 </td>
                                                             </tr>
                                                         </tbody>

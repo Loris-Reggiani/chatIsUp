@@ -206,9 +206,9 @@ export default function ProfilePage() {
 
     return (
         <div className="dashboard">
-            <SideBar email="email"/>
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email="email"/>
+                <TopBar />
                 <div className="dashboard-pages">
                     <div className="page-info">
                         <h1>Profile</h1>

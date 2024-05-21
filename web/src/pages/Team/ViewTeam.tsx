@@ -312,9 +312,9 @@ export default function ViewTeamDetails() {
 
     return (
         <div className="dashboard">
-            <SideBar email="email"/>
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email="email"/>
+                <TopBar />
                 <div className="page-info">
                     <h1>Team details</h1>
                 </div>

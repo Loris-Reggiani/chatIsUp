@@ -156,9 +156,14 @@ export default function Recon(idMission: any) {
         setWappaOk(false);
         setOpen(true);
         setMessage('Loading...', 'info');
+        console.log(`${getCookiePart(
+            Cookies.get('Token')!,
+            'token'
+        )}`);
+        console.log(`${wappDomain}`);
         await axios
             .get(
-                `https://voron.djnn.sh/wapp/get-url?target_url=${wappDomain}`,
+                `http://127.0.0.1:5173/wapp/get-url?target_url=${wappDomain}`,
                 {
                     headers: {
                         'Content-type': 'application/json',
@@ -211,6 +216,7 @@ export default function Recon(idMission: any) {
 
     useEffect(() => {
         getTech(wappRes);
+        console.log(wappRes)
     }, [wappRes, wappaOk]);
 
     return (

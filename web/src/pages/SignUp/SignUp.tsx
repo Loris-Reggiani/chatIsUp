@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as AiIcons from 'react-icons/ai';
 import './SignUp.scss';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Stack } from '@mui/material';
 import config from '../../config';
 import Feedbacks from '../../component/Feedback';
@@ -28,7 +28,6 @@ interface SignUpState {
 
 export default function SignUp() {
     const [pwdIcon, setPwdIcon] = useState(<AiIcons.AiOutlineEyeInvisible />);
-    const navigate = useNavigate();
     const [popUp, setPopUp] = useState(false);
     const [conPwdIcon, setConPwdIcon] = useState(
         <AiIcons.AiOutlineEyeInvisible />
@@ -111,30 +110,22 @@ export default function SignUp() {
 
         await axios
             .post(`${config.apiUrl}/register`, {
+                auth: {
                     username,
                     email,
                     role,
                     password,
+                },
             })
             .then(() => {
-                setMessage('Registration successful, redirecting to login...', 'success');
-                setPopUp(false);  // Assuming you might want to close any popup/modal if open
-                setTimeout(() => {
-                    navigate('/login');  // Redirects to the login page
-                }, 2000);  // Delaying the redirection for 2 seconds for user to read the message
-                // setMessage('Email verification sent', 'success');
-                // setPopUp(true);
+                setMessage('Signup successful !', 'success');
+                //setPopUp(true);
             })
-            .catch((error) => {
-                const defaultErrorMessage = 'An error occurred during registration.';
-                if (error.response && error.response.data) {
-                    // If the server returns a detailed error message, display it
-                    const messages = Object.values(error.response.data).join(' ');
-                    setMessage(messages || defaultErrorMessage, 'error');
-                } else {
-                    // Use a default error message if the response does not contain detailed info
-                    setMessage(defaultErrorMessage, 'error');
-                }
+            .catch((e: any) => {
+                setMessage(
+                    String(Object.values(e.response.data.auth)[0]),
+                    'error'
+                );
             });
     };
 

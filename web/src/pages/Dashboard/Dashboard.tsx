@@ -8,9 +8,9 @@ import SubDashboard from './SubDashboard';
 export default function Dashboard() {
     return (
         <div className="dashboard">
-            <SideBar email={"email"} />
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email={"email"} />
+                <TopBar />
                 {/* <Accueil /> */}
                 <SubDashboard />
             </div>

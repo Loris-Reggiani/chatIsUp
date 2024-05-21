@@ -158,8 +158,9 @@ export default function CreateMission() {
                 team: Team,
             };
         }
+        console.log(`url : ${config.apiUrl}mission`)
         await axios
-            .post(`${config.apiUrl}/mission`, requestData, {
+            .post(`${config.apiUrl}mission`, requestData, {
                 headers: {
                     'Content-type': 'application/json',
                     Authorization: `Token ${getCookiePart(
@@ -207,9 +208,9 @@ export default function CreateMission() {
 
     return (
         <div className="dashboard">
-            <SideBar email="email"/>
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email="email"/>
+                <TopBar />
                 <div className="page-info">
                     <div>
                         <h2 style={{ fontSize: '28px', fontFamily: 'Arial' }}>

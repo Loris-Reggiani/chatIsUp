@@ -20,10 +20,6 @@ import SideBar from '../../component/SideBar/SideBar';
 import TopBar from '../../component/SideBar/TopBar';
 import PayLoadForm from './shellcode/PayLoadForm';
 import { getCookiePart } from '../../crypto-utils';
-import Chat from '../Chat/Chat';
-import TeamList from '../Team/TeamList';
-// import { useUser } from '../../hooks/useUser';
-import { useLocation } from 'react-router-dom';
 
 Modal.setAppElement('#root'); // Make sure to set your root element here
 
@@ -54,32 +50,6 @@ type TeamProps = {
         name: string;
     };
 };
-
-interface Member {
-    id: number;
-    username: string;
-    email: string;
-    first_name?: string;
-    last_name?: string;
-    last_login?: string;
-    date_joined?: string;
-    phone_number?: string;
-    role?: number;
-    favorites?: string;
-    profile_image?: string;
-}
-
-interface Team {
-    id: number;
-    name: string;
-    members: Member[];
-}
-
-interface TeamListContainerProps {
-    team: Team;
-    userId: string;
-}
-
 
 type MissionProps = {
     title: string;
@@ -146,51 +116,22 @@ function TeamMemberContainer({ name, photo }: MemberProps) {
         </div>
     );
 }
-function TeamListContainer({ team, userId }: TeamListContainerProps) {
-    const [showPopup, setShowPopup] = useState(false);
-    console.log("team.id: ", team.id);
+
+function TeamListContainer({ team }: TeamProps) {
     return (
-        <div>
-            <h3>{team.name}</h3>
-            {team.members.map((member: Member) => (
-                <div key={member.id}>
-                    {/* <p>{member.username} - {member.email}</p> */}
-                </div>
-            ))}
-            <button onClick={() => setShowPopup(true)}>Open Chat</button>
-            {showPopup && (
-                <Modal isOpen={showPopup} onRequestClose={() => setShowPopup(false)}>
-                <Chat teamId={team.id} memberId={userId} />
-                    <button onClick={() => setShowPopup(false)}>Close Chat</button>
-                </Modal>
-            )}
+        <div className="accueil-team-container">
+            <p className="accueil-team-title">{team.name}</p>
+            {team.members.map((member) => {
+                return (
+                    <TeamMemberContainer
+                        name={member.auth.username}
+                        photo={member.auth.profile_image}
+                    />
+                );
+            })}
         </div>
     );
 }
-
-
-// function TeamListContainer({ team }: TeamProps) {
-//     const [showPopup, setShowPopup] = useState(false);
-//     return (
-//         <div className="accueil-team-container">
-//             <p className="accueil-team-title">{team.name}</p>
-//             <button onClick={() => setShowPopup(true)}>Open Chat</button>
-//             {team.members.map((member, index) => (
-//                 <TeamMemberContainer
-//                     key={member.id}
-//                     name={member.auth.username}
-//                     photo={member.auth.profile_image}
-//                 />
-//             ))}
-//             {showPopup && (
-//                 <Modal isOpen={showPopup} onRequestClose={() => setShowPopup(false)}>
-//                 <Chat teamId={team.id} />
-//                     <button onClick={() => setShowPopup(false)}>Close Chat</button>
-//                 </Modal>
-//             )}
-//         </div>
-//     );
-// }
 
 function MissionList({
     title,
@@ -325,27 +266,11 @@ function MissionList({
 }
 
 export default function Accueil() {
-    const navigationIsNow = useNavigate(); // Declare the 'navigate' variable before using it
-    const location = useLocation();
-    const email = location.state?.email;  // Access the email passed in state
-    console.log('Email:', email);
-    // const user = useUser();
-    let user = "";
     const [numProjects, setNumProjects] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
-    // const role = user?.role;
-    const role = 0;
-    // const role = getCookiePart(Cookies.get('Token')!, 'role')?.toString();
+    const role = getCookiePart(Cookies.get('Token')!, 'role')?.toString();
 
-    useEffect(() => {
-        // if (!user) {
-        //     navigate('/login');
-        // } else {
-        //     // You can use user.id, user.role etc. directly here
-        //     console.log('User ID:', user.id);
-        // }
-    }, [user, navigationIsNow]);
     const openModal = () => {
         setIsModalOpen(true);
     };
@@ -353,7 +278,7 @@ export default function Accueil() {
     const closeModal = () => {
         setIsModalOpen(false);
     };
-    const [userId, setUserId] = useState("");
+
     const [teamList, setTeamList] = useState<
         {
             id: number;
@@ -431,48 +356,48 @@ export default function Accueil() {
     }
 
     const getVulType = async () => {
-        // await axios
-        //     .get(`${config.apiUrl}/vuln-type?page=1`, {
-        //         headers: {
-        //             'Content-type': 'application/json',
-        //             Authorization: `Token ${getCookiePart(
-        //                 Cookies.get('Token')!,
-        //                 'token'
-        //             )}`,
-        //         },
-        //     })
-        //     .then(async (vulnT) => {
-        //         const newData = await vulnT.data;
-        //         setVulnType(newData.results);
-        //     })
-        //     .catch((e) => {
-        //         throw e.message;
-        //     });
+        await axios
+            .get(`${config.apiUrl}/vuln-type?page=1`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
+                },
+            })
+            .then(async (vulnT) => {
+                const newData = await vulnT.data;
+                setVulnType(newData.results);
+            })
+            .catch((e) => {
+                throw e.message;
+            });
     };
 
     const getTeamList = async () => {
         setIsLoad(true);
-        console.log(`Making request to URL: ${config.apiUrl}/user with email: ${email}`);
-        try {
-            const response = await axios.get(`${config.apiUrl}/user`, {
-                params: { email: email }  // Correctly passing email as a query parameter
+
+        await axios
+            .get(`${config.apiUrl}/team?page=1`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
+                },
+            })
+            .then((res) => {
+                setTeamList(res.data);
+            })
+            .catch((e) => {
+                throw e.message;
+            })
+            .finally(() => {
+                setIsLoad(false);
             });
-            if (response.data && response.data.teams) {
-                setTeamList(response.data.teams);
-                setUserId(response.data.username);
-            } else {
-                setTeamList([]);
-            }
-        } catch (error) {
-            console.error('Failed to fetch teams:', error);
-        } finally {
-            setIsLoad(false);
-        }
     };
-
-
-
-
 
     const setStatus = (end: string, start: string) => {
         if (currentDay.isAfter(dayjs(end))) return 100;
@@ -520,87 +445,87 @@ export default function Accueil() {
         let vulnLenth = 0;
         setIsLoad(true);
 
-        // await axios
-        //     .get(`${config.apiUrl}/mission?page=1`, {
-        //         headers: {
-        //             'Content-type': 'application/json',
-        //             Authorization: `Token ${getCookiePart(
-        //                 Cookies.get('Token')!,
-        //                 'token'
-        //             )}`,
-        //         },
-        //     })
-        //     .then(async (missions) => {
-        //         const tab = [];
-        //         const project = {
-        //             'In progress': 0,
-        //             Succeeded: 0,
-        //             'On hold': 0,
-        //         };
-        //         const missionData = missions.data.results;
-        //         // number of projects to show
-        //         setNumProjects(missionData.length);
-        //         for (let i = 0; i < missionData.length; i += 1) {
-        //             let VulnData: any = [];
-        //             const array = [];
-        //             await axios
-        //                 .get(`${config.apiUrl}/vulnerability?page=1`, {
-        //                     headers: {
-        //                         'Content-type': 'application/json',
-        //                         Authorization: `Token ${getCookiePart(
-        //                             Cookies.get('Token')!,
-        //                             'token'
-        //                         )}`,
-        //                     },
-        //                 })
-        //                 .then(async (res) => {
-        //                     VulnData = await res.data.results;
-        //                 })
-        //                 .catch((e) => {
-        //                     throw e.message;
-        //                 });
-        //             for (let j = 0; j < VulnData.length; j += 1) {
-        //                 if (VulnData[j].mission === missionData[i].id) {
-        //                     array.push(VulnData[j].vuln_type);
-        //                 }
-        //             }
-        //             const vul: any = getVulData(array);
-        //             tab.push({
-        //                 id: missionData[i].id,
-        //                 name: missionData[i].title,
-        //                 status: setStatus(
-        //                     missionData[i].end,
-        //                     missionData[i].start
-        //                 ),
-        //                 end: missionData[i].end,
-        //                 vuln: vul,
-        //             });
-        //             const s = missionData[i].status;
-        //             if (s === 'In progress') project['In progress'] += 1;
-        //             else project.Succeeded += 1;
-        //             vulnLenth += vul.length;
-        //             vulnImp = getVulnSev(vulnImp, vul);
-        //         }
-        //         tab.reverse();
-        //         setList(tab);
-        //         vulnImp.push({
-        //             value: vulnLenth,
-        //             name: 'total',
-        //         });
-        //         setVulnImport(vulnImp);
-        //         // set for piechart
-        //         setData([
-        //             { value: project['In progress'], label: 'In progress' },
-        //             { value: project.Succeeded, label: 'Succeeded' },
-        //             { value: project['On hold'], label: 'On hold' },
-        //         ]);
-        //     })
-        //     .catch((e) => {
-        //         throw e.message;
-        //     })
-        //     .finally(() => {
-        //         setIsLoad(false);
-        //     });
+        await axios
+            .get(`${config.apiUrl}/mission?page=1`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Token ${getCookiePart(
+                        Cookies.get('Token')!,
+                        'token'
+                    )}`,
+                },
+            })
+            .then(async (missions) => {
+                const tab = [];
+                const project = {
+                    'In progress': 0,
+                    Succeeded: 0,
+                    'On hold': 0,
+                };
+                const missionData = missions.data.results;
+                // number of projects to show
+                setNumProjects(missionData.length);
+                for (let i = 0; i < missionData.length; i += 1) {
+                    let VulnData: any = [];
+                    const array = [];
+                    await axios
+                        .get(`${config.apiUrl}/vulnerability?page=1`, {
+                            headers: {
+                                'Content-type': 'application/json',
+                                Authorization: `Token ${getCookiePart(
+                                    Cookies.get('Token')!,
+                                    'token'
+                                )}`,
+                            },
+                        })
+                        .then(async (res) => {
+                            VulnData = await res.data.results;
+                        })
+                        .catch((e) => {
+                            throw e.message;
+                        });
+                    for (let j = 0; j < VulnData.length; j += 1) {
+                        if (VulnData[j].mission === missionData[i].id) {
+                            array.push(VulnData[j].vuln_type);
+                        }
+                    }
+                    const vul: any = getVulData(array);
+                    tab.push({
+                        id: missionData[i].id,
+                        name: missionData[i].title,
+                        status: setStatus(
+                            missionData[i].end,
+                            missionData[i].start
+                        ),
+                        end: missionData[i].end,
+                        vuln: vul,
+                    });
+                    const s = missionData[i].status;
+                    if (s === 'In progress') project['In progress'] += 1;
+                    else project.Succeeded += 1;
+                    vulnLenth += vul.length;
+                    vulnImp = getVulnSev(vulnImp, vul);
+                }
+                tab.reverse();
+                setList(tab);
+                vulnImp.push({
+                    value: vulnLenth,
+                    name: 'total',
+                });
+                setVulnImport(vulnImp);
+                // set for piechart
+                setData([
+                    { value: project['In progress'], label: 'In progress' },
+                    { value: project.Succeeded, label: 'Succeeded' },
+                    { value: project['On hold'], label: 'On hold' },
+                ]);
+            })
+            .catch((e) => {
+                throw e.message;
+            })
+            .finally(() => {
+                setIsLoad(false);
+            });
     };
 
     useEffect(() => {
@@ -611,17 +536,12 @@ export default function Accueil() {
         getMission();
         getTeamList();
     }, [vulnType.length]);
-    useEffect(() => {
-        if (email) {  // Make sure the email is not undefined or empty
-            getTeamList();
-        }
-    }, [email]);  // Dependency on the email variable
 
     return (
         <div className="dashboard">
-            <SideBar email={email} />
+            <SideBar />
             <div className="dashboard_container">
-                <TopBar email={email} />
+                <TopBar />
                 <div className="dashboard-pages">
                     <div className="page-info">
                         <h1>Overviews</h1>
@@ -744,12 +664,12 @@ export default function Accueil() {
                                     <h5 style={{ marginBottom: '15px' }}>
                                         My mission
                                     </h5>
-                                    {role.toString() !== '1' && (
+                                    {role !== '1' && (
                                         <button
                                             type="submit"
                                             className="accueil-create-mission"
                                             onClick={() => {
-                                                navigate('/mission/create', { state: { email: email } });
+                                                navigate('/mission/create');
                                             }}
                                         >
                                             <FaPlus
@@ -811,13 +731,12 @@ export default function Accueil() {
                                     >
                                         Co-workers
                                     </h5>
-                                    {role.toString() !== '1' && (
+                                    {role !== '1' && (
                                         <button
                                             type="submit"
                                             className="accueil-create-mission"
                                             onClick={() => {
-                                                console.log('Email before navigate: ', email);
-                                                navigate('/team/create', { state: { email: email } });
+                                                navigate('/mission/create');
                                             }}
                                         >
                                             <FaPlus
@@ -840,39 +759,13 @@ export default function Accueil() {
                                     <div className="rect-scroll">
                                         {teamList && teamList.length > 0 ? (
                                             <>
-{teamList.map((team) => {
-    // Transform each team's members to match the expected Member structure
-    const transformedMembers = team.members.map(member => ({
-        id: member.id,
-        username: member.auth.username,
-        email: member.auth.email,
-        first_name: member.auth.first_name,
-        last_name: member.auth.last_name,
-        last_login: member.auth.last_login,
-        date_joined: member.auth.date_joined,
-        phone_number: member.auth.phone_number,
-        role: member.auth.role,
-        favorites: member.auth.favorites,
-        profile_image: member.auth.profile_image,
-        creation_date: member.creation_date
-    }));
-
-    // Create a new team object with transformed members
-    const transformedTeam = {
-        id: team.id,
-        name: team.name,
-        members: transformedMembers
-    };
-
-    return (
-        <TeamListContainer
-            key={team.id}
-            team={transformedTeam}
-            userId={userId}
-        />
-    );
-})}
-
+                                                {teamList.map((t) => {
+                                                    return (
+                                                        <TeamListContainer
+                                                            team={t}
+                                                        />
+                                                    );
+                                                })}
                                             </>
                                         ) : (
                                             <p style={{ marginTop: '22vh' }}>
