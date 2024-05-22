@@ -8,17 +8,15 @@ from sendgrid.helpers.mail import Mail, To, Attachment, FileContent, FileName, F
 from typing import Optional
 import sys
 
-
 class SendgridParameters:
     """Sendgrid parameters"""
     DEFAULT_SENDER = "reggi002@cougars.csusm.edu"
-    SENDGRID_API_KEY = "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"
+    SENDGRID_API_KEY = "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"
     TEMPLATE_ID_WELCOME = "d-791209ddcfb545169c2ff33e8c386400"
     TEMPLATE_ID_INFORMATION = "d-3578ab863b9147349b5f5686945ab74a"
     TEMPLATE_ID_PROMOTION = "d-163095583a2c4a9c8388547d96f0a761"
     TEMPLATE_ID_SURVEY = "d-9e7c66a0eca8416c84018012de0e61a3"
     TEMPLATE_ID_SURVEY_SCRIPTING = "d-5ad468904e1f4789b23fdbdac2134f10"
-
 
 class SendgridClient:
     """Sendgrid integration API"""
@@ -55,20 +53,36 @@ class SendgridClient:
             self.logger.exception(error)
             raise
 
-
-def get_recipients():
-    url = "https://v0ron.djnn.sh/api/mailing-list"
-    response = requests.get(url)
-    return response.json().get("results", [])
-
+def get_recipients(token):
+    url = "http://localhost:8000/mailing-list"
+    headers = {"Authorization": f"Token {token}"}
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        print(f"{response.json()}")
+        return response.json().get("results", [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching recipients: {e}")
+        return []
 
 def get_recipients_with_profile(token):
     headers = {"Authorization": f"Token {token}"}
 
-    pentester_data = requests.get(
-        "https://v0ron.djnn.sh/api/pentester", headers=headers).json().get("results", [])
-    manager_data = requests.get(
-        "https://v0ron.djnn.sh/api/manager", headers=headers).json().get("results", [])
+    try:
+        pentester_data = requests.get("http://localhost:8000/pentester", headers=headers)
+        pentester_data.raise_for_status()
+        pentester_data = pentester_data.json().get("results", [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching pentester data: {e}")
+        pentester_data = []
+
+    try:
+        manager_data = requests.get("http://localhost:8000/manager", headers=headers)
+        manager_data.raise_for_status()
+        manager_data = manager_data.json().get("results", [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching manager data: {e}")
+        manager_data = []
 
     recipients_with_profile = {}
     for data in pentester_data + manager_data:
@@ -78,29 +92,33 @@ def get_recipients_with_profile(token):
 
     return recipients_with_profile
 
-
 if __name__ == "__main__":
     print("Script started")
-    print("TEST environment variable:", os.environ.get('TEST', '0'))
 
-    token = 'ed43fdf24667f2bb31bc8586bc22a1250b6f45719ebcc357908eacd36f44282c73f37292b225086c9bf90e427ad2e2cf8d6feb94384a0e79eac3ae536a7174b9'
+    token = 'a7cd65c0b3c03218100868f17e5d480a34131407adb19d3b2ed5b3ab27b8ba5bb0b77315ee9eb5a73cc5dfc882a110527b5c737c3792071d80dc538c3c8ed039'
     try:
-        pentester_data = requests.get("https://v0ron.djnn.sh/api/pentester", headers={
+        pentester_data = requests.get("http://localhost:8000/pentester", headers={
             "Authorization": f"Token {token}"}).json().get("results", [])
+        print(f"Fetched {len(pentester_data)} pentester records.")
     except requests.exceptions.ConnectionError:
         print("Error connecting to /pentester endpoint.")
         pentester_data = []
 
     try:
-        manager_data = requests.get("https://v0ron.djnn.sh/api/manager", headers={
+        manager_data = requests.get("http://localhost:8000/manager", headers={
                                     "Authorization": f"Token {token}"}).json().get("results", [])
-    except requests.exceptions.ConnectionError:
-        print("Error connecting to /manager endpoint.")
+        print(f"Fetched {len(manager_data)} manager records.")
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching manager data: {e}")
         manager_data = []
 
     recipients_with_profile = get_recipients_with_profile(token)
 
-    recipients = get_recipients()
+    recipients = get_recipients(token)
+
+    #total_ = pentester_data + manager_data
+    #print(f"Number of recipients: {len(total_)}")
+
     print(f"Number of recipients: {len(recipients)}")
 
     template_name = sys.argv[1] if len(sys.argv) > 1 else "default"
@@ -168,5 +186,4 @@ The Voron Team""",
                 # no data
             }, recipient_email=email_address, username=username)
         response = email_client.send()
-        print(f"Email sent to {email_address} using template '{template_name}'. Response:",
-              response.status_code)
+        print(f"Email sent to {email_address} using template '{template_name}'. Response: {response}")

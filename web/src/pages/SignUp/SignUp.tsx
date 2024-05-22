@@ -122,6 +122,7 @@ export default function SignUp() {
                 //setPopUp(true);
             })
             .catch((e: any) => {
+                console.log(e)
                 setMessage(
                     String(Object.values(e.response.data.auth)[0]),
                     'error'

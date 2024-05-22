@@ -137,6 +137,7 @@ export default function SettingAccount() {
                     auth: {
                         first_name: userInfos.first_name,
                         last_name: userInfos.last_name,
+                        username: userInfos.username,
                         phone_number: userInfos.phone_number,
                         profile_image: userInfos.profile_image,
                     },
@@ -155,6 +156,9 @@ export default function SettingAccount() {
                 setMessage('Updated your account information!', 'success');
             })
             .catch((error) => {
+                console.log(userInfos.first_name)
+                console.log(userInfos.last_name)
+                console.log(userInfos.phone_number)
                 setMessage(error.message, 'error');
             });
     };

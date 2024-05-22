@@ -25,6 +25,8 @@ from django.db.models.deletion import CASCADE
 from django.core.mail import send_mail
 from django.core.cache import cache
 from api.services.sendgrid_mail import SendgridClient, SendgridParameters
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, To, Content, Substitution
 # from api.models.mailing_list import MailingListItem
 import requests
 
@@ -103,60 +105,158 @@ class Auth(AbstractUser):
     def check_password(self, raw_password=None) -> bool:
         return PasswordHasher().verify(self.password, raw_password) if raw_password else False  # type: ignore
 
-    def send_confirmation_email(self, email: str, first_name: str, url: str) -> None:
-        print(f'Sending confirmation email to {email}')
-        template_id = SendgridParameters.TEMPLATE_ID_WELCOME
+#     def send_confirmation_email(self, email: str) -> None:
+#         print(f'Sending confirmation email to {email}')
 
-        send_mail(
-            subject=f'Welcome {first_name}!',
-            message=f'Hello and welcome!\nPlease click on this link to confirm your account: {url}',
-            from_email=os.environ['SENDGRID_SENDER'],
-            recipient_list=[email],
-        )
+#         # Initialize SendgridClient with the recipient's email
+#         email_client = SendgridClient(recipient=email)
 
-        # Initialize SendgridClient with the recipient's email
-        email_client = SendgridClient(recipient=email)
+#         # Set the email's template ID
+#         email_client.mail.template_id = "d-791209ddcfb545169c2ff33e8c386400"
 
-        # Set the email's template ID
-        email_client.mail.template_id = template_id
+#         # Set dynamic data for the email template
+#         email_client.set_template_data({
+#             "text": """Welcome to our service!
 
-        # Set dynamic data for the email template
-        email_client.set_template_data({
-            "text": """Welcome to our service!
+# We are thrilled to have you as part of the Voron community. Your decision to join us is a significant step towards unlocking a world of opportunities and possibilities.
 
-We are thrilled to have you as part of the Voron community. Your decision to join us is a significant step towards unlocking a world of opportunities and possibilities.
+# Our team is dedicated to providing you with the best experience possible. Whether you are a new user exploring our platform or a returning customer, we are here to assist you at every step.
 
-Our team is dedicated to providing you with the best experience possible. Whether you are a new user exploring our platform or a returning customer, we are here to assist you at every step.
+# Feel free to navigate through our user-friendly interface, and discover the exciting features we have tailored just for you. Should you have any questions or need assistance, our support team is available 24/7 to address your queries.
 
-Feel free to navigate through our user-friendly interface, and discover the exciting features we have tailored just for you. Should you have any questions or need assistance, our support team is available 24/7 to address your queries.
+# Thank you for choosing Voron. We look forward to serving you and making your experience with us truly exceptional.
 
-Thank you for choosing Voron. We look forward to serving you and making your experience with us truly exceptional.
+# Best regards,
+# The Voron Team"""
+#         }, recipient_email=email)
+#         # Send the email
+#         try:
+#             response = email_client.send()
+#             print(
+#                 f'Confirmation email sent successfully to {email}. Response: {response.status_code}')
+#         except Exception as e:
+#             print(f'Error sending confirmation email to {email}: {str(e)}')
+#             return
+            
+#        return self.send_confirmation_email(self.email, self.first_name, url)
+        
+    #def send_confirm_email(self) -> int:
+    #    if '1' in (os.environ.get('TEST', '0'), os.environ.get('CI', '0')):
+    #        warning(f'Passing send_confirm_email() to {self.email}')
+    #        return 1
 
-Best regards,
-The Voron Team"""
-        }, recipient_email=email)
-        # Send the email
+    #    tmp_token = uuid.uuid4().hex
+    #    url = f'https://{os.environ["DOMAIN_NAME"]}/confirm?token={tmp_token}'
+    #    cache.set(tmp_token, self.email, CONFIRM_TOKEN_TIMEOUT_SECONDS)
+
+    #    return self.send_confirmation_email(self.email, self.first_name, url)
+
+    def send_confirmation_email(self, recipient_email: str) -> None:
+        print(f'Sending confirmation email to {recipient_email}')
+
+        # Define your SendGrid API key (make sure it's securely stored in your environment)
+        #SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+        SENDGRID_API_KEY = "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"
+        if not SENDGRID_API_KEY:
+            print('Error: SendGrid API key not found.')
+            return
+
         try:
-            response = email_client.send()
-            print(
-                f'Confirmation email sent successfully to {email}. Response: {response.status_code}')
+            # Initialize SendGrid client
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
+
+            # Create the email
+            from_email = Email("reggi002@cougars.csusm.edu")  # Replace with your verified sender email
+            to_email = To(recipient_email)
+            subject = "Welcome to Voron"
+            content = Content("text/plain", "Your email client does not support HTML content.")
+
+            mail = Mail(from_email, to_email, subject, content)
+            mail.template_id = "d-791209ddcfb545169c2ff33e8c386400"
+
+
+
+            # Define dynamic template data
+            dynamic_template_data = {
+                "text": """Welcome to our service!
+
+    We are thrilled to have you as part of the Voron community. Your decision to join us is a significant step towards unlocking a world of opportunities and possibilities.
+
+    Our team is dedicated to providing you with the best experience possible. Whether you are a new user exploring our platform or a returning customer, we are here to assist you at every step.
+
+    Feel free to navigate through our user-friendly interface, and discover the exciting features we have tailored just for you. Should you have any questions or need assistance, our support team is available 24/7 to address your queries.
+
+    Thank you for choosing Voron. We look forward to serving you and making your experience with us truly exceptional.
+
+    Best regards,
+    #The Voron Team"""
+            }
+
+            # Add dynamic data to the email
+            #for key, value in dynamic_template_data.items():
+            #    mail.personalizations[0].add_dynamic_template_data({key: value})
+            mail.dynamic_template_data = dynamic_template_data
+
+            # Send the email
+            response = sg.send(mail)
+            print(f'Confirmation email sent successfully to {recipient_email}. Response status code: {response.status_code}')
+
         except Exception as e:
-            print(f'Error sending confirmation email to {email}: {str(e)}')
+            print(f'Error sending confirmation email to {recipient_email}: {str(e)}')
 
-    def send_confirm_email(self) -> int:
-        if '1' in (os.environ.get('TEST', '0'), os.environ.get('CI', '0')):
-            warning(f'Passing send_confirm_email() to {self.email}')
-            return 1
+        return
 
-        tmp_token = uuid.uuid4().hex
-        url = f'https://{os.environ["DOMAIN_NAME"]}/confirm?token={tmp_token}'
-        cache.set(tmp_token, self.email, CONFIRM_TOKEN_TIMEOUT_SECONDS)
+    # def send_confirmation_email(self, email: str) -> None:
+    #     print(f'Sending confirmation email to {email}')
 
-        return self.send_confirmation_email(self.email, self.first_name, url)
+    #     # Initialize SendgridClient with the recipient's email
+    #     try:
+    #         email_client = SendgridClient(recipient=email)
+    #     except Exception as e:
+    #         print(f'Error initializing SendgridClient for {email}: {str(e)}')
+    #         return
+
+    #     # Set the email's template ID
+    #     try:
+    #         email_client.mail.template_id = "d-791209ddcfb545169c2ff33e8c386400"
+    #     except Exception as e:
+    #         print(f'Error setting template ID for {email}: {str(e)}')
+    #         return
+
+    #     # Set dynamic data for the email template
+    #     try:
+    #         email_client.set_template_data({
+    #             "text": """Welcome to our service!
+
+    # We are thrilled to have you as part of the Voron community. Your decision to join us is a significant step towards unlocking a world of opportunities and possibilities.
+
+    # Our team is dedicated to providing you with the best experience possible. Whether you are a new user exploring our platform or a returning customer, we are here to assist you at every step.
+
+    # Feel free to navigate through our user-friendly interface, and discover the exciting features we have tailored just for you. Should you have any questions or need assistance, our support team is available 24/7 to address your queries.
+
+    # Thank you for choosing Voron. We look forward to serving you and making your experience with us truly exceptional.
+
+    # Best regards,
+    # The Voron Team"""
+    #         }, recipient_email=email)
+    #     except Exception as e:
+    #         print(f'Error setting template data for {email}: {str(e)}')
+    #         return
+
+    #     # Send the email
+    #     try:
+    #         response = email_client.send()
+    #         if response is None:
+    #             raise ValueError("No response received from email client.")
+    #         print(f'Confirmation email sent successfully to {email}. Response: {response.status_code}')
+    #     except Exception as e:
+    #         print(f'Error sending confirmation email to {email}: {str(e)}')
+
+    #     return
 
     def save(self, *args, **kwargs) -> None:
-        if self.is_enabled is False:
-            self.send_confirm_email()
+        if self.pk is None:
+            self.send_confirmation_email(self.email)
         return super().save(*args, **kwargs)
 
 

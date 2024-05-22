@@ -92,7 +92,7 @@ export default function HunterEmailF() {
     };
 
     useEffect(() => {
-        const tmp = hunterEmailF.score.toString().concat('%');
+        const tmp = hunterEmailF?.score.toString().concat('%');
         setScore(tmp);
     }, [hunterEmailF]);
 
@@ -147,7 +147,8 @@ export default function HunterEmailF() {
                 </h3>
             ) : (
                 <div className="emailf-res-container">
-                    {hunterEmailF.score > 80 ? (
+
+                    {hunterEmailF?.score > 80 ? (
                         <Chip
                             avatar={
                                 <MdIcons.MdOutlineSecurity
@@ -179,10 +180,10 @@ export default function HunterEmailF() {
 
                     <div className="emailf-email-info">
                         <p>
-                            {hunterEmailF.first_name} {hunterEmailF.last_name}
+                            {hunterEmailF?.first_name} {hunterEmailF?.last_name}
                         </p>
-                        <span>{hunterEmailF.email}</span>
-                        <span>Company: {hunterEmailF.company}</span>
+                        <span>{hunterEmailF?.email}</span>
+                        <span>Company: {hunterEmailF?.company}</span>
                     </div>
                 </div>
             )}

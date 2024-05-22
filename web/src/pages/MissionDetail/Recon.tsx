@@ -118,7 +118,7 @@ export default function Recon(idMission: any) {
     };
 
     const findCategory = (c: any, search: string) => {
-        for (let i = 0; i < c.length; i += 1) {
+        for (let i = 0; i < c?.length; i += 1) {
             if (c[i].category === search) return i;
         }
         return -1;
@@ -130,9 +130,9 @@ export default function Recon(idMission: any) {
 
     const getTech = (w: any) => {
         const tab = [];
-        for (let i = 0; i < w.length; i += 1) {
+        for (let i = 0; i < w?.length; i += 1) {
             const tmp = w[i];
-            for (let j = 0; j < tmp.categories.length; j += 1) {
+            for (let j = 0; j < tmp.categories?.length; j += 1) {
                 const checked = findCategory(tab, tmp.categories[j].name);
                 if (checked > 0) {
                     tab[checked].info.push(tmp);

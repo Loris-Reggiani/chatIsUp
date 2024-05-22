@@ -50,63 +50,44 @@ const templates = [
 ];
 
 // type for setMD and setTemplate
-function DocumentTemplates({
-    setMD,
-    setTemplate,
-    reportInfo,
-    setReportInfo,
-}: {
-    setMD: Dispatch<SetStateAction<boolean>>;
-    setTemplate: (idx: number) => void;
-    reportInfo: IReport;
-    setReportInfo: Dispatch<SetStateAction<IReport>>;
+function DocumentTemplates({ setMD, setTemplate, reportInfo, setReportInfo }: {
+    setMD: Dispatch<SetStateAction<string>>,
+    setTemplate: Dispatch<SetStateAction<number>>,
+    reportInfo: any,
+    setReportInfo: Dispatch<SetStateAction<any>>,
 }) {
     const [reportHistory, setReportHistory] = useState<Array<IReport>>([]);
 
     useEffect(() => {
-        // list all templates from history
-        axios
-            .get(`${config.apiUrl}/download-report`, {
-                headers: {
-                    Authorization: `Token ${getCookiePart(
-                        Cookies.get('Token')!,
-                        'token'
-                    )}`,
-                },
-            })
-            .then((response) => {
-                if (response.data.count > 0) {
-                    setReportHistory(response.data.results);
-                }
-            });
+        axios.get(`${config.apiUrl}/download-report`, {
+            headers: {
+                Authorization: `Token ${getCookiePart(Cookies.get('Token')!, 'token')}`,
+            },
+        }).then(response => {
+            console.log('Report history response:', response); // Log the response for fetching report history
+            setReportHistory(response.data.results);
+        }).catch(error => {
+            console.error('Error fetching report history:', error); // Log errors encountered when fetching report history
+        });
     }, [setTemplate]);
 
     const handleTemplateSelection = async (templateId: number) => {
-        setTemplate(templateId);
-        console.log('l79, templateId', templateId);
-        axios
-            .post(
-                `${config.apiUrl}/download-report`,
-                {
-                    template_name: templates[templateId].name,
-                    mission: reportInfo.mission, // so we have several report per mission
-                    // but here we are talking about the selected mission via the select button
-                    // and it is mixed with data efjiozejfeiozjfioezjfoizejfijze
-                    logo: reportInfo.logo!, // same here
+        try {
+            setTemplate(templateId);
+            const response = await axios.post(`${config.apiUrl}/download-report`, {
+                template_name: templates[templateId].name,
+                mission: reportInfo.mission,
+                logo: reportInfo.logo,
+            }, {
+                headers: {
+                    Authorization: `Token ${getCookiePart(Cookies.get('Token')!, 'token')}`,
                 },
-                {
-                    headers: {
-                        Authorization: `Token ${getCookiePart(
-                            Cookies.get('Token')!,
-                            'token'
-                        )}`,
-                    },
-                }
-            )
-            .then((response) => {
-                setReportInfo(response.data);
-                console.log(response);
             });
+            console.log('Template selection response:', response); // Log the response from template selection
+            setReportInfo(response.data);
+        } catch (error) {
+            console.error('Error selecting template:', error); // Log errors encountered during template selection
+        }
     };
 
     return (
@@ -215,13 +196,8 @@ export default function Report() {
                     <BackButton
                         onClick={() => {
                             setMD(false);
-                            setReportInfo({
-                                ...reportInfo,
-                                html_file: '',
-                                id: -1,
-                            });
-                            const htmlReportEditor =
-                                document.getElementById('reportEditor');
+                            setReportInfo({ ...reportInfo, html_file: '', id: -1 });
+                            const htmlReportEditor = document.getElementById('reportEditor');
                             if (htmlReportEditor) {
                                 htmlReportEditor.innerHTML = '';
                             }
@@ -274,6 +250,7 @@ export default function Report() {
                     html_file={reportInfo.html_file}
                     css_style={reportInfo.css_style}
                 />
+
             )}
         </div>
     );
