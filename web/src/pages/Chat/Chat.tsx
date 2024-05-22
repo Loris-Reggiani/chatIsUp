@@ -8,8 +8,14 @@ import dayjs from 'dayjs';
 import styles from './Chat.module.scss';
 import { send } from 'vite';
 
+type Message = {
+    message: string;
+    timestamp: string;
+    sender_info: string;
+};
+
 function Chat({ teamId }: { teamId: number }) {
-    const [messages, setMessages] = useState<{ message: string; timestamp: string; sender_info: string }[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [messageInput, setMessageInput] = useState('');
     const [userInfos, setUserInfos] = useState({
         username: '',
@@ -52,7 +58,11 @@ function Chat({ teamId }: { teamId: number }) {
         const channel = pusher.subscribe('chat-channel');
 
         channel.bind('chat-event', (data: { message: string; timestamp: string }) => {
-            const newMessage = { message: data.message, timestamp: data.timestamp };
+            const newMessage: Message = { 
+                message: data.message, 
+                timestamp: data.timestamp, 
+                sender_info: userInfos.username 
+            };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
 

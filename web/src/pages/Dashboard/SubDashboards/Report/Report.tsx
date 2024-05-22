@@ -51,8 +51,8 @@ const templates = [
 
 // type for setMD and setTemplate
 function DocumentTemplates({ setMD, setTemplate, reportInfo, setReportInfo }: {
-    setMD: Dispatch<SetStateAction<string>>,
-    setTemplate: Dispatch<SetStateAction<number>>,
+    setMD: Dispatch<SetStateAction<boolean>>,
+    setTemplate: Dispatch<SetStateAction<any>>,
     reportInfo: any,
     setReportInfo: Dispatch<SetStateAction<any>>,
 }) {
@@ -231,7 +231,7 @@ export default function Report() {
                 <DocumentTemplates
                     setMD={setMD}
                     // eslint-disable-next-line
-                    setTemplate={function (idx) {
+                    setTemplate={function (idx : number) {
                         setTemplateIdx(idx);
                         setReportInfo({
                             ...reportInfo,
