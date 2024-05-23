@@ -156,7 +156,7 @@ class Auth(AbstractUser):
 
         # Define your SendGrid API key (make sure it's securely stored in your environment)
         #SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-        SENDGRID_API_KEY = "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"
+        SENDGRID_API_KEY = "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"
         if not SENDGRID_API_KEY:
             print('Error: SendGrid API key not found.')
             return

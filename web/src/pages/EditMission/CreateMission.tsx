@@ -158,9 +158,9 @@ export default function CreateMission() {
                 team: Team,
             };
         }
-        console.log(`url : ${config.apiUrl}mission`)
+        console.log(`url : ${config.apiUrl}/mission`)
         await axios
-            .post(`${config.apiUrl}mission`, requestData, {
+            .post(`${config.apiUrl}/mission`, requestData, {
                 headers: {
                     'Content-type': 'application/json',
                     Authorization: `Token ${getCookiePart(

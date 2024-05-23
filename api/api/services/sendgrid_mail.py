@@ -11,7 +11,7 @@ import sys
 class SendgridParameters:
     """Sendgrid parameters"""
     DEFAULT_SENDER = "reggi002@cougars.csusm.edu"
-    SENDGRID_API_KEY = "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"
+    SENDGRID_API_KEY = "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"
     TEMPLATE_ID_WELCOME = "d-791209ddcfb545169c2ff33e8c386400"
     TEMPLATE_ID_INFORMATION = "d-3578ab863b9147349b5f5686945ab74a"
     TEMPLATE_ID_PROMOTION = "d-163095583a2c4a9c8388547d96f0a761"
@@ -95,7 +95,7 @@ def get_recipients_with_profile(token):
 if __name__ == "__main__":
     print("Script started")
 
-    token = 'a7cd65c0b3c03218100868f17e5d480a34131407adb19d3b2ed5b3ab27b8ba5bb0b77315ee9eb5a73cc5dfc882a110527b5c737c3792071d80dc538c3c8ed039'
+    token = '336f7ff7e6916bf688126f3b0d6414cd8f8e64f3006a6017c89f890a94d9b8ea73a4bb8c4dc3736833c65a5100188be9faa4ba8494df4d1e8fe6534f6f233f54'
     try:
         pentester_data = requests.get("http://localhost:8000/pentester", headers={
             "Authorization": f"Token {token}"}).json().get("results", [])
